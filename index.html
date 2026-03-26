@@ -526,6 +526,52 @@ td.hi { color: var(--accent-intl); }
     <div class="borough-grid" id="boroughGrid"></div>
   </section>
 
+  <!-- BOROUGH TRAJECTORIES -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Five boroughs, five trajectories</h2>
+      <p class="section-intro">
+        Population indexed to 2011 = 100, so boroughs of different sizes can be compared on equal footing. Manhattan's COVID collapse and partial rebound stands out; Staten Island barely budged.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Population change by borough, indexed (2011 = 100)</div>
+      <div class="chart-wrap" style="height: 340px;">
+        <canvas id="chartBoroIndex"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#e06666"></div> Manhattan</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4db8ff"></div> Brooklyn</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f0c948"></div> Queens</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7ecf8e"></div> Bronx</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#b08cd8"></div> Staten Island</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOROUGH NET CHANGE -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Annual net population change by borough</h2>
+      <p class="section-intro">
+        The raw numbers: how many people each borough gained or lost in each year. Manhattan's 2021 loss of 117,000 was the single worst borough-year in the dataset.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Annual net population change by borough</div>
+      <div class="chart-wrap" style="height: 360px;">
+        <canvas id="chartBoroChange"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#e06666"></div> Manhattan</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4db8ff"></div> Brooklyn</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f0c948"></div> Queens</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7ecf8e"></div> Bronx</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#b08cd8"></div> Staten Island</div>
+      </div>
+    </div>
+  </section>
+
   <!-- NYC DATA TABLE -->
   <section class="section">
     <div class="section-header">
@@ -659,6 +705,24 @@ const BOROUGHS = [
   { name: 'Bronx', pop: 1406332, natural: 6220, intl: 12760, domestic: -18685, total: 280 },
   { name: 'Staten Island', pop: 501290, natural: 998, intl: 1558, domestic: -885, total: 1718 },
 ];
+
+// Borough time series: annual net change (Vintage 2020 for 2011-2020, Vintage 2025 for 2021-2025)
+const BORO_YEARS = ['2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'];
+const BORO_CHANGE = {
+  'Manhattan':      [19676,15856,3806,3354,5594,-606,-4384,56,-67,-20337,-117252,24138,37615,33976,-648],
+  'Brooklyn':       [30964,27620,19221,13768,7270,-651,-13789,-14269,-17759,-23395,-87683,-33825,11142,46764,-4694],
+  'Queens':         [20687,16659,14868,11446,7018,997,-11023,-19940,-21344,-28121,-57021,-37157,23384,52287,-8852],
+  'Bronx':          [10025,14133,10411,8976,9006,4198,-3722,-7640,-14129,-17045,-40253,-36927,-3575,25574,280],
+  'Staten Island':  [1407,-417,1186,116,402,1859,1659,712,-390,-814,-1021,-1522,2603,4390,1718],
+};
+// Borough populations for indexed chart
+const BORO_POP = {
+  'Manhattan':      [1608717,1624573,1628379,1631733,1637327,1636721,1632337,1632393,1632326,1611989,1569781,1593919,1631534,1665510,1664862],
+  'Brooklyn':       [2540918,2568538,2587759,2601527,2608797,2608146,2594357,2580088,2562329,2538934,2634576,2600751,2611893,2658657,2653963],
+  'Queens':         [2255261,2271920,2286788,2298234,2305252,2306249,2295226,2275286,2253942,2225821,2328520,2291363,2314747,2367034,2358182],
+  'Bronx':          [1396954,1411087,1421498,1430474,1439480,1443678,1439956,1432316,1418187,1401142,1420980,1384053,1380478,1406052,1406332],
+  'Staten Island':  [471014,470597,471783,471899,472301,474160,475819,476531,476141,475327,494101,492579,495182,499572,501290],
+};
 
 // ============================================
 // STATE DATA (Census NST files)
@@ -1035,6 +1099,169 @@ function buildTable(tableId, data) {
 
 buildTable('nycTable', NYC);
 buildTable('stateTable', STATE);
+
+// ============================================
+// CHART: BOROUGH INDEX (2011 = 100)
+// ============================================
+
+const boroColors = {
+  'Manhattan': '#e06666',
+  'Brooklyn': '#4db8ff',
+  'Queens': '#f0c948',
+  'Bronx': '#7ecf8e',
+  'Staten Island': '#b08cd8',
+};
+
+new Chart(document.getElementById('chartBoroIndex'), {
+  type: 'line',
+  data: {
+    labels: BORO_YEARS,
+    datasets: Object.keys(BORO_POP).map(name => ({
+      label: name,
+      data: BORO_POP[name].map(v => (v / BORO_POP[name][0]) * 100),
+      borderColor: boroColors[name],
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: boroColors[name],
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { grid: { display: false }, ticks: { callback: tickYears(BORO_YEARS) } },
+      y: {
+        ticks: { callback: v => v.toFixed(0), maxTicksLimit: 6 },
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: ctx => '  ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1)
+        }
+      },
+      annotation: {
+        annotations: {
+          baseline: { type: 'line', yMin: 100, yMax: 100, borderColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderDash: [4,4],
+            label: { display: true, content: '2011 baseline', position: 'start', color: '#5a5f69', font: { size: 10 }, backgroundColor: 'transparent', yAdjust: -8 }
+          }
+        }
+      }
+    }
+  }
+});
+
+// ============================================
+// CHART: BOROUGH ANNUAL CHANGE
+// ============================================
+
+new Chart(document.getElementById('chartBoroChange'), {
+  type: 'line',
+  data: {
+    labels: BORO_YEARS,
+    datasets: Object.keys(BORO_CHANGE).map(name => ({
+      label: name,
+      data: BORO_CHANGE[name],
+      borderColor: boroColors[name],
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: boroColors[name],
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { grid: { display: false }, ticks: { callback: tickYears(BORO_YEARS) } },
+      y: { ticks: { callback: v => fmt(v), maxTicksLimit: 8 } }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: ctx => '  ' + ctx.dataset.label + ': ' + fmtCell(Math.round(ctx.parsed.y))
+        }
+      },
+      annotation: {
+        annotations: {
+          zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 }
+        }
+      }
+    }
+  }
+});
+
+// ============================================
+// SCROLL-TRIGGERED ANIMATIONS
+// ============================================
+
+// Animate sections on scroll
+const sections = document.querySelectorAll('.section, .big-numbers');
+const style = document.createElement('style');
+style.textContent = `
+  .section, .big-numbers {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .section.visible, .big-numbers.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .hero {
+    animation: heroFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes heroFadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .big-num-value {
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .anno-card {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .annotation-strip.visible .anno-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .annotation-strip.visible .anno-card:nth-child(2) { transition-delay: 0.12s; }
+  .annotation-strip.visible .anno-card:nth-child(3) { transition-delay: 0.24s; }
+  .borough-card {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .borough-grid.visible .borough-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .borough-grid.visible .borough-card:nth-child(2) { transition-delay: 0.08s; }
+  .borough-grid.visible .borough-card:nth-child(3) { transition-delay: 0.16s; }
+  .borough-grid.visible .borough-card:nth-child(4) { transition-delay: 0.24s; }
+  .borough-grid.visible .borough-card:nth-child(5) { transition-delay: 0.32s; }
+`;
+document.head.appendChild(style);
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+sections.forEach(s => observer.observe(s));
+document.querySelectorAll('.annotation-strip, .borough-grid').forEach(s => observer.observe(s));
 </script>
 
 </body>
