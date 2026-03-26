@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New York City's population, pulled apart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+:root {
+  --bg: #0c0f14;
+  --card: #151a22;
+  --card-border: #1e2530;
+  --text: #e8e6e1;
+  --text-muted: #8a8f99;
+  --text-dim: #5a5f69;
+  --accent-intl: #4db8ff;
+  --accent-domestic: #ff6b6b;
+  --accent-natural: #7ecf8e;
+  --accent-pop: #f0c948;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.hero {
+  padding: 80px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(77,184,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-kicker {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent-intl);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-kicker::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: var(--accent-intl);
+  display: block;
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.08;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+  max-width: 700px;
+}
+
+h1 em { font-style: italic; color: var(--accent-intl); }
+
+.hero-deck {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 620px;
+}
+
+.hero-meta {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+}
+
+/* BIG NUMBERS */
+.big-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 56px;
+}
+
+.big-num {
+  background: var(--card);
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.big-num-value {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3.5vw, 34px);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.big-num-value.positive { color: var(--accent-natural); }
+.big-num-value.negative { color: var(--accent-domestic); }
+.big-num-value.neutral { color: var(--accent-pop); }
+.big-num-value.intl { color: var(--accent-intl); }
+
+.big-num-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* SECTIONS */
+.section { margin-bottom: 64px; }
+.section-header { margin-bottom: 28px; }
+
+h2 {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.section-intro {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+/* CHART CARDS */
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 28px 24px 20px;
+  margin-bottom: 20px;
+}
+
+.chart-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.chart-wrap { position: relative; width: 100%; }
+.chart-wrap canvas { width: 100% !important; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ANNOTATION CARDS */
+.annotation-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.anno-card {
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid var(--accent-intl);
+}
+
+.anno-card.domestic { border-left-color: var(--accent-domestic); }
+.anno-card.natural { border-left-color: var(--accent-natural); }
+.anno-card.pop { border-left-color: var(--accent-pop); }
+
+.anno-year {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.anno-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* BOROUGH GRID */
+.borough-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.borough-card {
+  background: var(--card);
+  padding: 20px 16px;
+}
+
+.borough-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.borough-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 3px 0;
+  color: var(--text-muted);
+}
+
+.borough-stat .val { font-variant-numeric: tabular-nums; }
+.borough-stat .val.pos { color: var(--accent-natural); }
+.borough-stat .val.neg { color: var(--accent-domestic); }
+.borough-stat .val.hi { color: var(--accent-intl); }
+
+/* DATA TABLE */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 680px;
+}
+
+thead th {
+  background: var(--card);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 14px 12px;
+  text-align: right;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+thead th:first-child { text-align: left; padding-left: 16px; }
+
+tbody td {
+  padding: 10px 12px;
+  text-align: right;
+  border-top: 1px solid var(--card-border);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+tbody td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  padding-left: 16px;
+}
+
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+td.pos { color: var(--accent-natural); }
+td.neg { color: var(--accent-domestic); }
+td.hi { color: var(--accent-intl); }
+
+/* DIVIDER */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--card-border);
+  margin: 72px 0;
+}
+
+.state-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+}
+
+/* METHODOLOGY */
+.methodology {
+  padding: 40px 0 64px;
+  border-top: 1px solid var(--card-border);
+  margin-top: 32px;
+}
+
+.methodology h3 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.methodology p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  max-width: 680px;
+  margin-bottom: 8px;
+}
+
+.methodology a { color: var(--accent-intl); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .hero { padding: 48px 0 32px; }
+  .big-numbers { grid-template-columns: repeat(2, 1fr); }
+  .chart-card { padding: 20px 14px 16px; }
+  .annotation-strip { grid-template-columns: 1fr; }
+  .borough-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-kicker">Census Bureau population estimates &middot; March 2026</div>
+    <h1>New York City's population, pulled <em>apart</em></h1>
+    <p class="hero-deck">
+      For over a decade, New York City has been caught in a tug-of-war: residents leaving for other parts of the country, immigrants arriving from abroad, and a slowly shrinking natural advantage of births over deaths. New Census estimates released today show how an immigration crackdown brought the city's growth engine to a halt -- and into reverse.
+    </p>
+    <div class="hero-meta">
+      Data: U.S. Census Bureau, Vintage 2025 and Vintage 2020 Population Estimates, county-level components of change for the five boroughs (Bronx, Kings, New York, Queens, Richmond counties)
+    </div>
+  </header>
+
+  <!-- BIG NUMBERS -->
+  <div class="big-numbers">
+    <div class="big-num">
+      <div class="big-num-value negative">-12,196</div>
+      <div class="big-num-label">Net change<br>2024-2025</div>
+    </div>
+    <div class="big-num">
+      <div class="big-num-value negative">-113,718</div>
+      <div class="big-num-label">Domestic<br>migration</div>
+    </div>
+    <div class="big-num">
+      <div class="big-num-value intl">+65,824</div>
+      <div class="big-num-label">International<br>migration</div>
+    </div>
+    <div class="big-num">
+      <div class="big-num-value positive">+36,101</div>
+      <div class="big-num-label">Natural<br>change</div>
+    </div>
+  </div>
+
+  <!-- CHART 1: NYC Population -->
+  <section class="section">
+    <div class="section-header">
+      <h2>The pandemic cratered the city. Immigration rebuilt it. Now that's gone.</h2>
+      <p class="section-intro">
+        NYC lost over 300,000 people in a single year during COVID. A historic wave of international migration -- asylum seekers, visa backlogs clearing -- brought it most of the way back. Then in 2025, the immigration crackdown cut that flow by 70%, and the city is shrinking again.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">New York City population, 2011-2025</div>
+      <div class="chart-wrap" style="height: 280px;">
+        <canvas id="chartPop"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHART 2: Components -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Three forces, one city</h2>
+      <p class="section-intro">
+        Every year, NYC's population is shaped by three competing forces. The red bars (domestic outflow) have been relentless. The blue bars (international inflow) swung wildly. And the green (natural change) has been slowly shrinking.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Annual components of population change, NYC</div>
+      <div class="chart-wrap" style="height: 380px;">
+        <canvas id="chartComponents"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-natural)"></div> Natural change (births - deaths)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-intl)"></div> International migration</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-domestic)"></div> Domestic migration</div>
+      </div>
+    </div>
+    <div class="annotation-strip">
+      <div class="anno-card domestic">
+        <div class="anno-year">2020-2021</div>
+        <div class="anno-text">COVID exodus: 330,000 people left NYC for elsewhere in the U.S. -- more than the entire population of Cincinnati.</div>
+      </div>
+      <div class="anno-card">
+        <div class="anno-year">2023-2024</div>
+        <div class="anno-text">International migration surged to 220,000, the highest level in memory. Asylum seekers arrived by the tens of thousands.</div>
+      </div>
+      <div class="anno-card pop">
+        <div class="anno-year">2024-2025</div>
+        <div class="anno-text">Federal immigration crackdown cut international arrivals by 70%. The city shrank by 12,000 people.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHART 3: Migration -->
+  <section class="section">
+    <div class="section-header">
+      <h2>The migration seesaw</h2>
+      <p class="section-intro">
+        NYC has always lost people to other parts of the U.S. and gained them from abroad. When international migration is strong enough to offset domestic losses, the city grows. When it isn't, the city shrinks. In 2025, it wasn't.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Net domestic vs. net international migration, NYC</div>
+      <div class="chart-wrap" style="height: 340px;">
+        <canvas id="chartMigration"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-intl)"></div> International migration</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-domestic)"></div> Domestic migration</div>
+        <div class="legend-item"><div class="legend-dot" style="border: 2px solid var(--accent-pop); background: transparent;"></div> Net migration (combined)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHART 4: Natural change -->
+  <section class="section">
+    <div class="section-header">
+      <h2>The shrinking buffer</h2>
+      <p class="section-intro">
+        Births have declined steadily while deaths rose through COVID. The natural increase that once added nearly 70,000 New Yorkers per year now adds just 36,000 -- and the gap keeps closing.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Births, deaths, and natural change, NYC</div>
+      <div class="chart-wrap" style="height: 320px;">
+        <canvas id="chartNatural"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-natural)"></div> Births</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-domestic)"></div> Deaths</div>
+        <div class="legend-item"><div class="legend-dot" style="border: 2px solid rgba(126,207,142,0.5); background: rgba(126,207,142,0.15);"></div> Natural change (shaded area)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOROUGH BREAKDOWN -->
+  <section class="section">
+    <div class="section-header">
+      <h2>How each borough fared</h2>
+      <p class="section-intro">
+        Every borough except Staten Island and the Bronx lost population in 2025. Queens and Brooklyn bore the brunt of the domestic outflow.
+      </p>
+    </div>
+    <div class="borough-grid" id="boroughGrid"></div>
+  </section>
+
+  <!-- NYC DATA TABLE -->
+  <section class="section">
+    <div class="section-header">
+      <h2>NYC: the full picture</h2>
+      <p class="section-intro">Every component of population change for the five boroughs combined, year by year.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="nycTable">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Population</th>
+            <th>Births</th>
+            <th>Deaths</th>
+            <th>Natural change</th>
+            <th>Intl. migration</th>
+            <th>Domestic migration</th>
+            <th>Net change</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========== STATE SECTION ========== -->
+  <hr class="section-divider">
+
+  <section class="section">
+    <div class="section-header">
+      <span class="state-label">New York state</span>
+      <h2>The state picture: barely holding on</h2>
+      <p class="section-intro">
+        New York state added just 1,008 people in 2025 -- functionally flat. The state has been losing residents to domestic migration for over two decades, and the latest immigration slowdown erased the counterweight. Here are the full state-level components going back to 2003.
+      </p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Annual components of population change, New York state, 2003-2025</div>
+      <div class="chart-wrap" style="height: 360px;">
+        <canvas id="chartStateComponents"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-natural)"></div> Natural change</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-intl)"></div> International migration</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-domestic)"></div> Domestic migration</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>State data table</h2>
+      <p class="section-intro">All components, 2003-2025, for New York state.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="stateTable">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Population</th>
+            <th>Births</th>
+            <th>Deaths</th>
+            <th>Natural change</th>
+            <th>Intl. migration</th>
+            <th>Domestic migration</th>
+            <th>Net change</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <footer class="methodology">
+    <h3>Sources and methodology</h3>
+    <p>
+      <strong>Data sources:</strong> U.S. Census Bureau, Vintage 2025 county-level Population Estimates
+      (<a href="https://www.census.gov/data/tables/time-series/demo/popest/2020s-counties-total.html">CO-EST2025-ALLDATA</a>)
+      and Vintage 2020 county-level estimates
+      (<a href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/counties/totals/">CO-EST2020-ALLDATA</a>)
+      for NYC borough data. State-level data from
+      <a href="https://www.census.gov/data/tables/time-series/demo/popest/2020s-state-total.html">NST-EST2025-ALLDATA</a>,
+      <a href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/state/totals/">NST-EST2020-ALLDATA</a>,
+      and annual components tables
+      (<a href="https://www2.census.gov/programs-surveys/popest/tables/2000-2009/state/totals/">2003-2009 series</a>).
+    </p>
+    <p>
+      <strong>Definitions:</strong> NYC totals are the sum of the five boroughs (Bronx, Kings/Brooklyn, New York/Manhattan, Queens, and Richmond/Staten Island counties). "Natural change" = births minus deaths. "International migration" = net movement from abroad. "Domestic migration" = net movement to/from other U.S. counties. All population estimates are as of July 1.
+    </p>
+    <p>
+      <strong>Notes:</strong> The 2020-2025 and 2011-2020 data use different Census Bureau vintages. Small residual adjustments (not shown) account for differences between the sum of components and total change. The 2020 row in the Vintage 2025 series covers a partial year and overlaps with the Vintage 2020 series; we use each vintage's full-year data and avoid double-counting.
+    </p>
+    <p>
+      <strong>Limitations:</strong> Census population estimates are modeled from administrative records (IRS data, Medicare, immigration files), not direct counts. International migration estimates were substantially revised upward in recent vintages. Domestic migration is derived from IRS and other address-change records and may undercount certain populations.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+// ============================================
+// NYC DATA (Census county-level, 5 boroughs summed)
+// ============================================
+
+const NYC = [
+  // 2011-2020: Vintage 2020 county data (CO-EST2020-ALLDATA)
+  { year: '2011', pop: 8272864, births: 120511, deaths: 52303, natural: 68208, intl: 63067, domestic: -48668, total: 82759 },
+  { year: '2012', pop: 8346715, births: 118504, deaths: 50826, natural: 67678, intl: 63943, domestic: -57413, total: 73851 },
+  { year: '2013', pop: 8396207, births: 119147, deaths: 53245, natural: 65902, intl: 55387, domestic: -71610, total: 49492 },
+  { year: '2014', pop: 8433867, births: 117035, deaths: 52835, natural: 64200, intl: 59649, domestic: -86263, total: 37660 },
+  { year: '2015', pop: 8463157, births: 117615, deaths: 53963, natural: 63652, intl: 58620, domestic: -93172, total: 29290 },
+  { year: '2016', pop: 8468954, births: 115844, deaths: 53180, natural: 62664, intl: 61914, domestic: -118964, total: 5797 },
+  { year: '2017', pop: 8437695, births: 113418, deaths: 53828, natural: 59590, intl: 48030, domestic: -139091, total: -31259 },
+  { year: '2018', pop: 8396614, births: 110954, deaths: 54288, natural: 56666, intl: 39188, domestic: -136990, total: -41081 },
+  { year: '2019', pop: 8342925, births: 106802, deaths: 59387, natural: 47415, intl: 30610, domestic: -131367, total: -53689 },
+  { year: '2020', pop: 8253213, births: 105091, deaths: 66992, natural: 38099, intl: 24784, domestic: -151899, total: -89712 },
+  // 2021-2025: Vintage 2025 county data (CO-EST2025-ALLDATA)
+  { year: '2021', pop: 8447958, births: 91969, deaths: 62178, natural: 29791, intl: 19997, domestic: -329532, total: -303230 },
+  { year: '2022', pop: 8362665, births: 94076, deaths: 60358, natural: 33718, intl: 83564, domestic: -212791, total: -85293 },
+  { year: '2023', pop: 8433834, births: 92402, deaths: 56755, natural: 35647, intl: 155131, domestic: -120939, total: 71169 },
+  { year: '2024', pop: 8596825, births: 91465, deaths: 54559, natural: 36906, intl: 219578, domestic: -93867, total: 162991 },
+  { year: '2025', pop: 8584629, births: 90084, deaths: 53983, natural: 36101, intl: 65824, domestic: -113718, total: -12196 },
+];
+
+// Borough data for 2025
+const BOROUGHS = [
+  { name: 'Manhattan', pop: 1664862, natural: 2898, intl: 13270, domestic: -16852, total: -648 },
+  { name: 'Brooklyn', pop: 2653963, natural: 16835, intl: 17564, domestic: -38847, total: -4694 },
+  { name: 'Queens', pop: 2358182, natural: 9150, intl: 20672, domestic: -38449, total: -8852 },
+  { name: 'Bronx', pop: 1406332, natural: 6220, intl: 12760, domestic: -18685, total: 280 },
+  { name: 'Staten Island', pop: 501290, natural: 998, intl: 1558, domestic: -885, total: 1718 },
+];
+
+// ============================================
+// STATE DATA (Census NST files)
+// ============================================
+
+const STATE = [
+  { year: '2003', pop: 19190683, births: 253133, deaths: 163489, natural: 89644, intl: 136185, domestic: -170041, total: 55822 },
+  { year: '2004', pop: 19205346, births: 255913, deaths: 155729, natural: 100184, intl: 129260, domestic: -214855, total: 14663 },
+  { year: '2005', pop: 19179249, births: 253695, deaths: 154935, natural: 98760, intl: 108811, domestic: -232638, total: -26097 },
+  { year: '2006', pop: 19169711, births: 247783, deaths: 156561, natural: 91222, intl: 124371, domestic: -225766, total: -9538 },
+  { year: '2007', pop: 19185452, births: 249203, deaths: 153730, natural: 95473, intl: 111607, domestic: -189765, total: 15741 },
+  { year: '2008', pop: 19246433, births: 251952, deaths: 153852, natural: 98100, intl: 94797, domestic: -126209, total: 60981 },
+  { year: '2009', pop: 19320097, births: 249132, deaths: 154116, natural: 95016, intl: 75099, domestic: -98178, total: 73664 },
+  { year: '2011', pop: 19499921, births: 243117, deaths: 149781, natural: 93336, intl: 87332, domestic: -80685, total: 99965 },
+  { year: '2012', pop: 19574362, births: 239907, deaths: 146887, natural: 93020, intl: 90304, domestic: -108325, total: 74441 },
+  { year: '2013', pop: 19626488, births: 239882, deaths: 152565, natural: 87317, intl: 78010, domestic: -112510, total: 52126 },
+  { year: '2014', pop: 19653431, births: 237033, deaths: 148863, natural: 88170, intl: 84452, domestic: -145557, total: 26943 },
+  { year: '2015', pop: 19657321, births: 239348, deaths: 153901, natural: 85447, intl: 84301, domestic: -166054, total: 3890 },
+  { year: '2016', pop: 19636391, births: 235792, deaths: 151604, natural: 84188, intl: 88805, domestic: -194135, total: -20930 },
+  { year: '2017', pop: 19593849, births: 231207, deaths: 155117, natural: 76090, intl: 69336, domestic: -188058, total: -42542 },
+  { year: '2018', pop: 19544098, births: 229316, deaths: 156755, natural: 72561, intl: 57774, domestic: -180043, total: -49751 },
+  { year: '2019', pop: 19463131, births: 223378, deaths: 162158, natural: 61220, intl: 41869, domestic: -183857, total: -80967 },
+  { year: '2020', pop: 19336776, births: 220375, deaths: 177602, natural: 42773, intl: 35181, domestic: -203893, total: -126355 },
+  { year: '2021', pop: 19835345, births: 205539, deaths: 177237, natural: 28302, intl: 28772, domestic: -326190, total: -286917 },
+  { year: '2022', pop: 19713025, births: 209944, deaths: 176586, natural: 33358, intl: 121570, domestic: -284910, total: -122320 },
+  { year: '2023', pop: 19786543, births: 205879, deaths: 166689, natural: 39190, intl: 211383, domestic: -177852, total: 73518 },
+  { year: '2024', pop: 20001419, births: 205405, deaths: 161811, natural: 43594, intl: 290637, domestic: -119231, total: 214876 },
+  { year: '2025', pop: 20002427, births: 203078, deaths: 160263, natural: 42815, intl: 95634, domestic: -137586, total: 1008 },
+];
+
+// ============================================
+// CHART DEFAULTS
+// ============================================
+
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#5a5f69';
+Chart.defaults.plugins.tooltip.backgroundColor = '#1e2530';
+Chart.defaults.plugins.tooltip.titleColor = '#e8e6e1';
+Chart.defaults.plugins.tooltip.bodyColor = '#8a8f99';
+Chart.defaults.plugins.tooltip.borderColor = '#2a3040';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.tooltip.cornerRadius = 6;
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.displayColors = true;
+Chart.defaults.plugins.tooltip.boxPadding = 4;
+Chart.defaults.plugins.legend.display = false;
+Chart.defaults.scale.grid = { color: 'rgba(255,255,255,0.04)', drawBorder: false };
+Chart.defaults.scale.ticks = { padding: 6 };
+
+function fmt(n) {
+  const abs = Math.abs(n);
+  const prefix = n < 0 ? '-' : '+';
+  if (abs >= 1000000) return prefix + (abs / 1000000).toFixed(1) + 'M';
+  if (abs >= 1000) return prefix + Math.round(abs / 1000) + 'k';
+  return prefix + abs;
+}
+
+function fmtPop(n) { return (n / 1000000).toFixed(2) + 'M'; }
+function fmtNum(n) { return n.toLocaleString('en-US'); }
+function fmtCell(n) { return (n > 0 ? '+' : '') + n.toLocaleString('en-US'); }
+
+const tickYears = (labels) => function(val) {
+  const label = this.getLabelForValue(val);
+  const show = ['2011','2013','2015','2017','2019','2021','2023','2025'];
+  return show.includes(label) ? label : '';
+};
+
+const stateTickYears = function(val) {
+  const label = this.getLabelForValue(val);
+  return ['2003','2006','2009','2012','2015','2018','2021','2025'].includes(label) ? label : '';
+};
+
+// ============================================
+// CHART 1: NYC POPULATION
+// ============================================
+
+new Chart(document.getElementById('chartPop'), {
+  type: 'line',
+  data: {
+    labels: NYC.map(d => d.year),
+    datasets: [{
+      data: NYC.map(d => d.pop),
+      borderColor: '#f0c948',
+      backgroundColor: 'rgba(240,201,72,0.08)',
+      borderWidth: 2.5,
+      fill: true,
+      tension: 0.3,
+      pointRadius: 0,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: '#f0c948',
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { grid: { display: false }, ticks: { callback: tickYears(NYC.map(d=>d.year)) } },
+      y: {
+        min: 8100000, max: 8700000,
+        ticks: { callback: v => (v / 1000000).toFixed(1) + 'M', maxTicksLimit: 6 }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          title: ctx => 'July ' + ctx[0].label,
+          label: ctx => '  Population: ' + fmtPop(ctx.parsed.y)
+        }
+      },
+      annotation: {
+        annotations: {
+          peak: {
+            type: 'point',
+            xValue: '2016',
+            yValue: 8468954,
+            backgroundColor: 'rgba(240,201,72,0.3)',
+            borderColor: '#f0c948',
+            borderWidth: 1.5,
+            radius: 5
+          },
+          peakLabel: {
+            type: 'label',
+            xValue: '2016',
+            yValue: 8468954,
+            content: ['Peak: 8.47M'],
+            color: '#f0c948',
+            font: { size: 10, weight: 500 },
+            backgroundColor: 'transparent',
+            position: 'start',
+            yAdjust: -16
+          }
+        }
+      }
+    }
+  }
+});
+
+// ============================================
+// CHART 2: NYC COMPONENTS
+// ============================================
+
+new Chart(document.getElementById('chartComponents'), {
+  type: 'bar',
+  data: {
+    labels: NYC.map(d => d.year),
+    datasets: [
+      {
+        label: 'Natural change',
+        data: NYC.map(d => d.natural),
+        backgroundColor: '#7ecf8e',
+        borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
+        stack: 'positive', order: 3
+      },
+      {
+        label: 'International migration',
+        data: NYC.map(d => d.intl),
+        backgroundColor: '#4db8ff',
+        borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
+        stack: 'positive', order: 2
+      },
+      {
+        label: 'Domestic migration',
+        data: NYC.map(d => d.domestic),
+        backgroundColor: '#ff6b6b',
+        borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
+        stack: 'negative', order: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { callback: tickYears(NYC.map(d=>d.year)) } },
+      y: { stacked: true, ticks: { callback: v => fmt(v), maxTicksLimit: 8 } }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          title: ctx => ctx[0].label,
+          label: ctx => '  ' + ctx.dataset.label + ': ' + fmtCell(ctx.parsed.y),
+          afterBody: function(ctx) {
+            const d = NYC[ctx[0].dataIndex];
+            return ['\n  Net change: ' + fmtCell(d.total)];
+          }
+        }
+      },
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 } } }
+    }
+  }
+});
+
+// ============================================
+// CHART 3: NYC MIGRATION
+// ============================================
+
+new Chart(document.getElementById('chartMigration'), {
+  type: 'bar',
+  data: {
+    labels: NYC.map(d => d.year),
+    datasets: [
+      {
+        type: 'bar', label: 'International migration',
+        data: NYC.map(d => d.intl),
+        backgroundColor: 'rgba(77,184,255,0.7)', borderRadius: 2, barPercentage: 0.5, categoryPercentage: 0.9, order: 2
+      },
+      {
+        type: 'bar', label: 'Domestic migration',
+        data: NYC.map(d => d.domestic),
+        backgroundColor: 'rgba(255,107,107,0.7)', borderRadius: 2, barPercentage: 0.5, categoryPercentage: 0.9, order: 3
+      },
+      {
+        type: 'line', label: 'Net migration',
+        data: NYC.map(d => d.intl + d.domestic),
+        borderColor: '#f0c948', backgroundColor: 'transparent', borderWidth: 2.5,
+        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#f0c948', tension: 0.3, order: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { grid: { display: false }, ticks: { callback: tickYears(NYC.map(d=>d.year)) } },
+      y: { ticks: { callback: v => fmt(v), maxTicksLimit: 8 } }
+    },
+    plugins: {
+      tooltip: { callbacks: { label: ctx => '  ' + ctx.dataset.label + ': ' + fmtCell(Math.round(ctx.parsed.y)) } },
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 } } }
+    }
+  }
+});
+
+// ============================================
+// CHART 4: NYC BIRTHS/DEATHS
+// ============================================
+
+new Chart(document.getElementById('chartNatural'), {
+  type: 'line',
+  data: {
+    labels: NYC.map(d => d.year),
+    datasets: [
+      {
+        label: 'Births', data: NYC.map(d => d.births),
+        borderColor: '#7ecf8e', backgroundColor: 'rgba(126,207,142,0.08)', borderWidth: 2,
+        fill: '+1', tension: 0.3, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#7ecf8e', order: 1
+      },
+      {
+        label: 'Deaths', data: NYC.map(d => d.deaths),
+        borderColor: '#ff6b6b', backgroundColor: 'transparent', borderWidth: 2,
+        fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#ff6b6b', order: 2
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { grid: { display: false }, ticks: { callback: tickYears(NYC.map(d=>d.year)) } },
+      y: { min: 40000, max: 130000, ticks: { callback: v => Math.round(v / 1000) + 'k', maxTicksLimit: 6 } }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: ctx => '  ' + ctx.dataset.label + ': ' + fmtNum(ctx.parsed.y),
+          afterBody: function(ctx) {
+            const d = NYC[ctx[0].dataIndex];
+            return ['\n  Natural change: ' + fmtCell(d.natural)];
+          }
+        }
+      }
+    }
+  }
+});
+
+// ============================================
+// BOROUGH CARDS
+// ============================================
+
+const grid = document.getElementById('boroughGrid');
+BOROUGHS.forEach(b => {
+  const cls = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+  const card = document.createElement('div');
+  card.className = 'borough-card';
+  card.innerHTML = `
+    <div class="borough-name">${b.name}</div>
+    <div class="borough-stat"><span>Population</span><span class="val">${fmtNum(b.pop)}</span></div>
+    <div class="borough-stat"><span>Net change</span><span class="val ${cls(b.total)}">${fmtCell(b.total)}</span></div>
+    <div class="borough-stat"><span>Intl. migration</span><span class="val hi">${fmtCell(b.intl)}</span></div>
+    <div class="borough-stat"><span>Domestic migration</span><span class="val ${cls(b.domestic)}">${fmtCell(b.domestic)}</span></div>
+    <div class="borough-stat"><span>Natural change</span><span class="val ${cls(b.natural)}">${fmtCell(b.natural)}</span></div>
+  `;
+  grid.appendChild(card);
+});
+
+// ============================================
+// STATE COMPONENTS CHART
+// ============================================
+
+new Chart(document.getElementById('chartStateComponents'), {
+  type: 'bar',
+  data: {
+    labels: STATE.map(d => d.year),
+    datasets: [
+      {
+        label: 'Natural change', data: STATE.map(d => d.natural),
+        backgroundColor: '#7ecf8e', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
+        stack: 'positive', order: 3
+      },
+      {
+        label: 'International migration', data: STATE.map(d => d.intl),
+        backgroundColor: '#4db8ff', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
+        stack: 'positive', order: 2
+      },
+      {
+        label: 'Domestic migration', data: STATE.map(d => d.domestic),
+        backgroundColor: '#ff6b6b', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
+        stack: 'negative', order: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { callback: stateTickYears } },
+      y: { stacked: true, ticks: { callback: v => fmt(v), maxTicksLimit: 8 } }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          title: ctx => ctx[0].label,
+          label: ctx => '  ' + ctx.dataset.label + ': ' + fmtCell(ctx.parsed.y),
+          afterBody: function(ctx) {
+            const d = STATE[ctx[0].dataIndex];
+            return ['\n  Net change: ' + fmtCell(d.total)];
+          }
+        }
+      },
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 } } }
+    }
+  }
+});
+
+// ============================================
+// DATA TABLES
+// ============================================
+
+function buildTable(tableId, data) {
+  const tbody = document.querySelector('#' + tableId + ' tbody');
+  [...data].reverse().forEach(d => {
+    const tr = document.createElement('tr');
+    const cls = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+    const hi = n => n > 200000 ? ' hi' : '';
+    tr.innerHTML = `
+      <td>${d.year}</td>
+      <td>${fmtNum(d.pop)}</td>
+      <td>${fmtNum(d.births)}</td>
+      <td>${fmtNum(d.deaths)}</td>
+      <td class="${cls(d.natural)}">${fmtCell(d.natural)}</td>
+      <td class="${cls(d.intl)}${hi(d.intl)}">${fmtCell(d.intl)}</td>
+      <td class="${cls(d.domestic)}">${fmtCell(d.domestic)}</td>
+      <td class="${cls(d.total)}">${fmtCell(d.total)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+buildTable('nycTable', NYC);
+buildTable('stateTable', STATE);
+</script>
+
+</body>
+</html>
