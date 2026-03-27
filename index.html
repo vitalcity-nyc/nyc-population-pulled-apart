@@ -867,27 +867,30 @@ new Chart(document.getElementById('chartPop'), {
 // ============================================
 
 new Chart(document.getElementById('chartComponents'), {
-  type: 'bar',
+  type: 'line',
   data: {
     labels: NYC.map(d => d.year),
     datasets: [
       {
         label: 'Domestic migration',
         data: NYC.map(d => d.domestic),
-        backgroundColor: '#ff6b6b',
-        borderRadius: 2, barPercentage: 0.85, categoryPercentage: 0.8,
+        borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#ff6b6b',
       },
       {
         label: 'International migration',
         data: NYC.map(d => d.intl),
-        backgroundColor: '#4db8ff',
-        borderRadius: 2, barPercentage: 0.85, categoryPercentage: 0.8,
+        borderColor: '#4db8ff', backgroundColor: 'rgba(77,184,255,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#4db8ff',
       },
       {
         label: 'Natural change',
         data: NYC.map(d => d.natural),
-        backgroundColor: '#7ecf8e',
-        borderRadius: 2, barPercentage: 0.85, categoryPercentage: 0.8,
+        borderColor: '#7ecf8e', backgroundColor: 'rgba(126,207,142,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#7ecf8e',
       }
     ]
   },
