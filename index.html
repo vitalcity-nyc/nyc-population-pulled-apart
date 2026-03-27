@@ -872,25 +872,22 @@ new Chart(document.getElementById('chartComponents'), {
     labels: NYC.map(d => d.year),
     datasets: [
       {
-        label: 'Natural change',
-        data: NYC.map(d => d.natural),
-        backgroundColor: '#7ecf8e',
-        borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
-        stack: 'positive', order: 3
-      },
-      {
         label: 'International migration',
         data: NYC.map(d => d.intl),
         backgroundColor: '#4db8ff',
         borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
-        stack: 'positive', order: 2
+      },
+      {
+        label: 'Natural change',
+        data: NYC.map(d => d.natural),
+        backgroundColor: '#7ecf8e',
+        borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
       },
       {
         label: 'Domestic migration',
         data: NYC.map(d => d.domestic),
         backgroundColor: '#ff6b6b',
         borderRadius: 2, barPercentage: 0.7, categoryPercentage: 0.85,
-        stack: 'negative', order: 1
       }
     ]
   },
@@ -928,20 +925,20 @@ new Chart(document.getElementById('chartMigration'), {
     labels: NYC.map(d => d.year),
     datasets: [
       {
-        type: 'bar', label: 'International migration',
+        label: 'International migration',
         data: NYC.map(d => d.intl),
-        backgroundColor: 'rgba(77,184,255,0.7)', borderRadius: 2, barPercentage: 0.5, categoryPercentage: 0.9, order: 2
+        backgroundColor: 'rgba(77,184,255,0.7)', borderRadius: 2, barPercentage: 0.8, categoryPercentage: 0.8,
       },
       {
-        type: 'bar', label: 'Domestic migration',
+        label: 'Domestic migration',
         data: NYC.map(d => d.domestic),
-        backgroundColor: 'rgba(255,107,107,0.7)', borderRadius: 2, barPercentage: 0.5, categoryPercentage: 0.9, order: 3
+        backgroundColor: 'rgba(255,107,107,0.7)', borderRadius: 2, barPercentage: 0.8, categoryPercentage: 0.8,
       },
       {
         type: 'line', label: 'Net migration',
         data: NYC.map(d => d.intl + d.domestic),
         borderColor: '#f0c948', backgroundColor: 'transparent', borderWidth: 2.5,
-        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#f0c948', tension: 0.3, order: 1
+        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#f0c948', tension: 0.3, order: 0
       }
     ]
   },
@@ -1033,19 +1030,16 @@ new Chart(document.getElementById('chartStateComponents'), {
     labels: STATE.map(d => d.year),
     datasets: [
       {
-        label: 'Natural change', data: STATE.map(d => d.natural),
-        backgroundColor: '#7ecf8e', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
-        stack: 'positive', order: 3
-      },
-      {
         label: 'International migration', data: STATE.map(d => d.intl),
         backgroundColor: '#4db8ff', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
-        stack: 'positive', order: 2
+      },
+      {
+        label: 'Natural change', data: STATE.map(d => d.natural),
+        backgroundColor: '#7ecf8e', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
       },
       {
         label: 'Domestic migration', data: STATE.map(d => d.domestic),
         backgroundColor: '#ff6b6b', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
-        stack: 'negative', order: 1
       }
     ]
   },
