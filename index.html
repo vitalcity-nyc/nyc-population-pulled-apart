@@ -443,7 +443,7 @@ td.hi { color: var(--accent-intl); }
     <div class="section-header">
       <h2>Three forces, one city</h2>
       <p class="section-intro">
-        Every year, NYC's population is shaped by three competing forces. The red bars (domestic outflow) have been relentless. The blue bars (international inflow) swung wildly. And the green (natural change) has been slowly shrinking.
+        Every year, NYC's population is shaped by three competing forces. The red line (domestic outflow) has been relentless. The blue line (international inflow) swung wildly. And the green (natural change) has been slowly shrinking.
       </p>
     </div>
     <div class="chart-card">
@@ -923,25 +923,30 @@ new Chart(document.getElementById('chartComponents'), {
 // ============================================
 
 new Chart(document.getElementById('chartMigration'), {
-  type: 'bar',
+  type: 'line',
   data: {
     labels: NYC.map(d => d.year),
     datasets: [
       {
         label: 'International migration',
         data: NYC.map(d => d.intl),
-        backgroundColor: 'rgba(77,184,255,0.7)', borderRadius: 2, barPercentage: 0.8, categoryPercentage: 0.8,
+        borderColor: '#4db8ff', backgroundColor: 'rgba(77,184,255,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#4db8ff',
       },
       {
         label: 'Domestic migration',
         data: NYC.map(d => d.domestic),
-        backgroundColor: 'rgba(255,107,107,0.7)', borderRadius: 2, barPercentage: 0.8, categoryPercentage: 0.8,
+        borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#ff6b6b',
       },
       {
-        type: 'line', label: 'Net migration',
+        label: 'Net migration (combined)',
         data: NYC.map(d => d.intl + d.domestic),
         borderColor: '#f0c948', backgroundColor: 'transparent', borderWidth: 2.5,
-        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#f0c948', tension: 0.3, order: 0
+        borderDash: [6, 3], tension: 0.3,
+        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#f0c948',
       }
     ]
   },
@@ -955,7 +960,7 @@ new Chart(document.getElementById('chartMigration'), {
     },
     plugins: {
       tooltip: { callbacks: { label: ctx => '  ' + ctx.dataset.label + ': ' + fmtCell(Math.round(ctx.parsed.y)) } },
-      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 } } }
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.3)', borderWidth: 1 } } }
     }
   }
 });
@@ -1028,21 +1033,27 @@ BOROUGHS.forEach(b => {
 // ============================================
 
 new Chart(document.getElementById('chartStateComponents'), {
-  type: 'bar',
+  type: 'line',
   data: {
     labels: STATE.map(d => d.year),
     datasets: [
       {
+        label: 'Domestic migration', data: STATE.map(d => d.domestic),
+        borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#ff6b6b',
+      },
+      {
         label: 'International migration', data: STATE.map(d => d.intl),
-        backgroundColor: '#4db8ff', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
+        borderColor: '#4db8ff', backgroundColor: 'rgba(77,184,255,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#4db8ff',
       },
       {
         label: 'Natural change', data: STATE.map(d => d.natural),
-        backgroundColor: '#7ecf8e', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
-      },
-      {
-        label: 'Domestic migration', data: STATE.map(d => d.domestic),
-        backgroundColor: '#ff6b6b', borderRadius: 2, barPercentage: 0.65, categoryPercentage: 0.85,
+        borderColor: '#7ecf8e', backgroundColor: 'rgba(126,207,142,0.08)',
+        borderWidth: 2.5, fill: true, tension: 0.3,
+        pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#7ecf8e',
       }
     ]
   },
@@ -1051,8 +1062,8 @@ new Chart(document.getElementById('chartStateComponents'), {
     maintainAspectRatio: false,
     interaction: { intersect: false, mode: 'index' },
     scales: {
-      x: { stacked: true, grid: { display: false }, ticks: { callback: stateTickYears } },
-      y: { stacked: true, ticks: { callback: v => fmt(v), maxTicksLimit: 8 } }
+      x: { grid: { display: false }, ticks: { callback: stateTickYears } },
+      y: { ticks: { callback: v => fmt(v), maxTicksLimit: 8 } }
     },
     plugins: {
       tooltip: {
@@ -1065,7 +1076,7 @@ new Chart(document.getElementById('chartStateComponents'), {
           }
         }
       },
-      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1 } } }
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.3)', borderWidth: 1 } } }
     }
   }
 });
