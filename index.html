@@ -398,7 +398,7 @@ td.hi { color: var(--accent-intl); }
       For over a decade, New York City has been caught in a tug-of-war: residents leaving for other parts of the country, immigrants arriving from abroad, and a slowly shrinking natural advantage of births over deaths. New Census estimates released today show how an immigration crackdown brought the city's growth engine to a halt -- and into reverse.
     </p>
     <div class="hero-meta">
-      Data: U.S. Census Bureau, Vintage 2025 and Vintage 2020 Population Estimates, county-level components of change for the five boroughs (Bronx, Kings, New York, Queens, Richmond counties)
+      Data: U.S. Census Bureau, Vintage 2025 Population Estimates (released March 26, 2026) and Vintage 2020 estimates; county-level components of change for the five boroughs (Bronx, Kings, New York, Queens, Richmond counties)
     </div>
   </header>
 
@@ -648,25 +648,46 @@ td.hi { color: var(--accent-intl); }
   <!-- METHODOLOGY -->
   <footer class="methodology">
     <h3>Sources and methodology</h3>
+
     <p>
-      <strong>Data sources:</strong> U.S. Census Bureau, Vintage 2025 county-level Population Estimates
-      (<a href="https://www.census.gov/data/tables/time-series/demo/popest/2020s-counties-total.html">CO-EST2025-ALLDATA</a>)
-      and Vintage 2020 county-level estimates
-      (<a href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/counties/totals/">CO-EST2020-ALLDATA</a>)
-      for NYC borough data. State-level data from
-      <a href="https://www.census.gov/data/tables/time-series/demo/popest/2020s-state-total.html">NST-EST2025-ALLDATA</a>,
-      <a href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/state/totals/">NST-EST2020-ALLDATA</a>,
-      and annual components tables
-      (<a href="https://www2.census.gov/programs-surveys/popest/tables/2000-2009/state/totals/">2003-2009 series</a>).
+      <strong>Release:</strong> This analysis uses data from the Census Bureau's <strong>Vintage 2025</strong> population estimates, the most recent available. County-level data (used for NYC borough breakdowns) was
+      <a href="https://www.census.gov/newsroom/press-releases/2026/2025-popest-metro-micro-counties.html">released March 26, 2026</a>.
+      National and state-level data was
+      <a href="https://www.census.gov/newsroom/press-releases/2026/population-growth-slows.html">released January 27, 2026</a>.
+      All estimates are as of July 1 of each year.
     </p>
+
     <p>
-      <strong>Definitions:</strong> NYC totals are the sum of the five boroughs (Bronx, Kings/Brooklyn, New York/Manhattan, Queens, and Richmond/Staten Island counties). "Natural change" = births minus deaths. "International migration" = net movement from abroad. "Domestic migration" = net movement to/from other U.S. counties. All population estimates are as of July 1.
+      <strong>Data files:</strong>
     </p>
+    <ul style="color:var(--text-secondary);font-size:0.85rem;margin:0.3rem 0 1rem 1.5rem;line-height:1.6;">
+      <li><strong>NYC (2021-2025):</strong> <a href="https://www.census.gov/data/tables/time-series/demo/popest/2020s-counties-total.html">CO-EST2025-ALLDATA</a> -- Vintage 2025 county-level components of change. We sum the five borough counties: Bronx, Kings (Brooklyn), New York (Manhattan), Queens, and Richmond (Staten Island).</li>
+      <li><strong>NYC (2011-2020):</strong> <a href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/counties/totals/">CO-EST2020-ALLDATA</a> -- Vintage 2020 county-level components of change, same five-county summation.</li>
+      <li><strong>New York state (2021-2025):</strong> <a href="https://www.census.gov/data/tables/time-series/demo/popest/2020s-state-total.html">NST-EST2025-ALLDATA</a> -- Vintage 2025 state-level components of change.</li>
+      <li><strong>New York state (2011-2020):</strong> <a href="https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/state/totals/">NST-EST2020-ALLDATA</a> -- Vintage 2020 state-level components.</li>
+      <li><strong>New York state (2003-2010):</strong> <a href="https://www2.census.gov/programs-surveys/popest/tables/2000-2009/state/totals/">Annual state components tables, 2000-2009 series</a>.</li>
+    </ul>
+
     <p>
-      <strong>Notes:</strong> The 2020-2025 and 2011-2020 data use different Census Bureau vintages. Small residual adjustments (not shown) account for differences between the sum of components and total change. The 2020 row in the Vintage 2025 series covers a partial year and overlaps with the Vintage 2020 series; we use each vintage's full-year data and avoid double-counting.
+      <strong>Definitions:</strong> "Natural change" = births minus deaths. "International migration" = net movement from abroad (immigration minus emigration of both foreign-born and native-born persons). "Domestic migration" = net movement to or from other U.S. counties (measured primarily through IRS tax-return address changes). Population totals include a small residual adjustment that accounts for rounding and methodological differences; the sum of components may not exactly equal net change.
     </p>
+
     <p>
-      <strong>Limitations:</strong> Census population estimates are modeled from administrative records (IRS data, Medicare, immigration files), not direct counts. International migration estimates were substantially revised upward in recent vintages. Domestic migration is derived from IRS and other address-change records and may undercount certain populations.
+      <strong>How Census estimates work:</strong> Population estimates are not direct counts. The Census Bureau starts from the 2020 decennial census base and adds components of change each year. Births and deaths come from the National Center for Health Statistics. Domestic migration is derived from IRS tax-return data and Medicare enrollment records. International migration combines American Community Survey data with administrative records from other federal agencies. For details on the Vintage 2025 methodology, see the Census Bureau's
+      <a href="https://www.census.gov/newsroom/blogs/random-samplings/2026/01/updates-data-methodology-population-estimates.html">January 2026 methodology update</a> and
+      <a href="https://www2.census.gov/about/training-workshops/2026/2026-01-20-methodology-updates-vintage-2025-estimates-presentation.pdf">methodology presentation (PDF)</a>.
+    </p>
+
+    <p>
+      <strong>Key Vintage 2025 methodology changes:</strong> The Census Bureau made significant changes to how it estimates international migration in this release. It combined administrative data from federal agencies with American Community Survey data to better track sudden shifts in migration flows caused by policy changes, humanitarian surges, or pandemics. For the 2024-2025 period, the Bureau used monthly data from its internal Benchmark Database to estimate immigration declines since January 2025. It also updated estimates of non-U.S.-born emigration using survey data from Mexico. These changes contributed to the Bureau's finding that net international migration fell 54% nationally between 2024 and 2025.
+    </p>
+
+    <p>
+      <strong>Vintage transitions:</strong> The 2021-2025 data and the 2011-2020 data come from different Census Bureau vintages, each anchored to a different decennial census base. Vintage 2025 is based on the 2020 census; Vintage 2020 is based on the 2010 census. Each vintage is internally consistent but the two are not directly comparable at the margins. We display both series without splicing to preserve each vintage's integrity. The 2020 row appears only in the Vintage 2020 series to avoid double-counting.
+    </p>
+
+    <p>
+      <strong>Limitations:</strong> Because these are modeled estimates rather than direct counts, all figures carry some uncertainty. International migration is the most difficult component to measure and has been substantially revised in recent vintages -- the Vintage 2023 release, for example, retroactively added hundreds of thousands of previously uncounted immigrants to 2021-2023 estimates. Domestic migration derived from IRS records may undercount populations that do not file tax returns. The "residual" adjustment (not displayed in charts) can be substantial in years with large revisions. Borough-level components are more uncertain than citywide totals.
     </p>
   </footer>
 
