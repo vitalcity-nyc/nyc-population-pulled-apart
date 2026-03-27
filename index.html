@@ -395,7 +395,7 @@ td.hi { color: var(--accent-intl); }
     <div class="hero-kicker">Census Bureau population estimates &middot; March 2026</div>
     <h1>New York City's population, pulled <em>apart</em></h1>
     <p class="hero-deck">
-      New Census estimates released March 26 show New York City lost 12,196 people in the year ending July 2025 -- its first population decline since COVID. The cause: international migration to the city plunged 70%, from 220,000 arrivals to just 66,000, as a federal immigration crackdown took hold. The collapse erased the force that had been pulling the city back from its pandemic losses. Now all three forces shaping the city's population -- domestic outflow, international inflow, and natural change -- are pointing the wrong way.
+      New Census estimates released March 26 show New York City lost 12,196 people in the year ending July 2025 -- its first population decline since COVID. International migration to the city fell 70%, from 220,000 arrivals to 66,000. Domestic outflow continued at -114,000, and natural increase slipped to 36,000. The city's population stands at 8,584,629, still about 251,000 below its 2020 peak.
     </p>
     <div class="hero-meta">
       Data: U.S. Census Bureau, Vintage 2025 Population Estimates (released March 26, 2026) and Vintage 2020 estimates; county-level components of change for the five boroughs (Bronx, Kings, New York, Queens, Richmond counties)
@@ -427,7 +427,7 @@ td.hi { color: var(--accent-intl); }
     <div class="section-header">
       <h2>A COVID crash, an immigration rebound, and a sharp reversal</h2>
       <p class="section-intro">
-        NYC lost 303,000 people in a single year during COVID. A historic wave of international migration -- asylum seekers, visa backlogs clearing -- brought it most of the way back, peaking at 220,000 arrivals in 2023-2024. Then the federal crackdown hit: international arrivals collapsed to 66,000, the lowest since the pandemic. The city's population fell to 8,584,629 -- still 251,000 below its 2020 peak.
+        NYC lost 303,000 people in a single year during COVID. International migration then rose sharply, peaking at 220,000 arrivals in 2023-2024. In 2024-2025, international arrivals fell to 66,000 -- the lowest since the pandemic. The city's population is 8,584,629, about 251,000 below its 2020 peak.
       </p>
     </div>
     <div class="chart-card">
@@ -443,7 +443,7 @@ td.hi { color: var(--accent-intl); }
     <div class="section-header">
       <h2>Three forces, one city</h2>
       <p class="section-intro">
-        Every year, NYC's population is shaped by three competing forces. The red line (domestic outflow) has been relentless. The blue line (international inflow) swung wildly. And the green (natural change) has been slowly shrinking.
+        NYC's population change has three components. The red line shows domestic migration, which has been negative every year in the dataset. The blue line shows international migration, which varied from +20,000 to +220,000. The green line shows natural change (births minus deaths), which has declined steadily.
       </p>
     </div>
     <div class="chart-card">
@@ -460,15 +460,15 @@ td.hi { color: var(--accent-intl); }
     <div class="annotation-strip">
       <div class="anno-card domestic">
         <div class="anno-year">2020-2021</div>
-        <div class="anno-text">COVID exodus: 330,000 people left NYC for elsewhere in the U.S. -- more than the entire population of Cincinnati.</div>
+        <div class="anno-text">Domestic migration hit -330,000, the largest single-year domestic outflow in the dataset.</div>
       </div>
       <div class="anno-card">
         <div class="anno-year">2023-2024</div>
-        <div class="anno-text">International migration surged to 220,000, the highest level in memory. Asylum seekers arrived by the tens of thousands.</div>
+        <div class="anno-text">International migration reached 220,000, the highest level in the dataset.</div>
       </div>
       <div class="anno-card pop">
         <div class="anno-year">2024-2025</div>
-        <div class="anno-text">Federal immigration crackdown cut international arrivals by 70%. The city shrank by 12,000 people.</div>
+        <div class="anno-text">International arrivals fell 70% to 66,000. Net population change: -12,196.</div>
       </div>
     </div>
   </section>
@@ -476,9 +476,9 @@ td.hi { color: var(--accent-intl); }
   <!-- CHART 3: Migration -->
   <section class="section">
     <div class="section-header">
-      <h2>The migration seesaw</h2>
+      <h2>Domestic vs. international migration</h2>
       <p class="section-intro">
-        NYC has always lost people to other parts of the U.S. and gained them from abroad. When international migration is strong enough to offset domestic losses, the city grows. When it isn't, the city shrinks. In 2025, international arrivals (+66,000) couldn't cover domestic losses (-114,000) for the first time since the immigration surge began in 2022.
+        NYC has had negative domestic migration every year since at least 2011, offset in most years by positive international migration. In 2025, international arrivals (+66,000) did not offset domestic losses (-114,000), producing a net migration deficit of -48,000.
       </p>
     </div>
     <div class="chart-card">
@@ -497,9 +497,9 @@ td.hi { color: var(--accent-intl); }
   <!-- CHART 4: Natural change -->
   <section class="section">
     <div class="section-header">
-      <h2>The shrinking buffer</h2>
+      <h2>Births, deaths, and natural change</h2>
       <p class="section-intro">
-        Births have declined steadily while deaths rose through COVID. The natural increase that once added nearly 70,000 New Yorkers per year now adds just 36,000. NYC recorded 90,084 births in the latest year -- the lowest in the dataset -- against 53,983 deaths. The buffer is half what it was a decade ago and still shrinking.
+        Natural change (births minus deaths) added 36,101 people in 2025, down from 68,208 in 2011. Births fell from 120,511 to 90,084 over that period while deaths remained between 52,000 and 67,000. The gap has narrowed by about half.
       </p>
     </div>
     <div class="chart-card">
@@ -520,7 +520,7 @@ td.hi { color: var(--accent-intl); }
     <div class="section-header">
       <h2>How each borough fared</h2>
       <p class="section-intro">
-        Every borough except Staten Island and the Bronx lost population in 2025. Queens and Brooklyn bore the brunt of the domestic outflow.
+        Three boroughs lost population in 2025: Queens (-8,852), Brooklyn (-4,694), and Manhattan (-648). The Bronx (+280) and Staten Island (+1,718) gained. Queens and Brooklyn had the largest domestic outflows, at -38,000 each.
       </p>
     </div>
     <div class="borough-grid" id="boroughGrid"></div>
@@ -531,7 +531,7 @@ td.hi { color: var(--accent-intl); }
     <div class="section-header">
       <h2>Five boroughs, five trajectories</h2>
       <p class="section-intro">
-        Population indexed to 2011 = 100, so boroughs of different sizes can be compared on equal footing. Manhattan's COVID collapse and partial rebound stands out; Staten Island barely budged.
+        Population indexed to 2011 = 100, so boroughs of different sizes can be compared on the same scale. Manhattan had the largest swing: falling to 97.6 in 2021 before recovering to 103.5 in 2024. Staten Island has remained within a narrow range throughout.
       </p>
     </div>
     <div class="chart-card">
@@ -554,7 +554,7 @@ td.hi { color: var(--accent-intl); }
     <div class="section-header">
       <h2>Annual net population change by borough</h2>
       <p class="section-intro">
-        The raw numbers: how many people each borough gained or lost in each year. Manhattan's 2021 loss of 117,000 was the single worst borough-year in the dataset.
+        Annual net population change for each borough. Manhattan's 2021 loss of 117,000 was the largest single borough-year change in the dataset.
       </p>
     </div>
     <div class="chart-card">
@@ -605,7 +605,7 @@ td.hi { color: var(--accent-intl); }
       <span class="state-label">New York state</span>
       <h2>The state picture: net gain of 1,008</h2>
       <p class="section-intro">
-        New York state added just 1,008 people in 2025 -- functionally flat. The state has been losing residents to domestic migration for over two decades, and the latest immigration slowdown erased the counterweight. Here are the full state-level components going back to 2003.
+        New York state added 1,008 people in 2025. International migration fell from 291,000 to 96,000 while domestic migration remained negative at -138,000. Natural change contributed +43,000. State-level components of change go back to 2003.
       </p>
     </div>
     <div class="chart-card">
